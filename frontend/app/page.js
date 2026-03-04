@@ -1,65 +1,105 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { createRoom, joinRoom } from '../lib/api.js';
+
+export default function HomePage() {
+  const [username, setUsername] = useState('');
+  const [roomId, setRoomId] = useState('');
+  const [loadingAction, setLoadingAction] = useState(null);
+  const router = useRouter();
+
+  const handleCreateRoom = async () => {
+    if (!username) return alert('Enter a username');
+    setLoadingAction('create');
+    try {
+      const data = await createRoom(username);
+      localStorage.setItem(`_wp_user_${data.roomId}`, JSON.stringify({
+        participantId: data.participantId,
+        username,
+        role: data.role
+      }));
+      router.push(`/room/${data.roomId}`);
+    } catch (err) {
+      alert('Error creating room');
+      setLoadingAction(null);
+    }
+  };
+
+  const handleJoinRoom = async () => {
+    if (!username || !roomId) return alert('Enter a username and room ID');
+    setLoadingAction('join');
+    try {
+      const data = await joinRoom(roomId, username);
+      localStorage.setItem(`_wp_user_${roomId}`, JSON.stringify({
+        participantId: data.participantId,
+        username,
+        role: data.role
+      }));
+      router.push(`/room/${roomId}`);
+    } catch (err) {
+      alert('Error joining room');
+      setLoadingAction(null);
+    }
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
+    <>
+      <nav className="navbar">
+        <div className="navbar-logo">
+          <span style={{ fontSize: '28px' }}>📺</span> WatchParty.
+        </div>
+      </nav>
+
+      <div className="container" style={{ marginTop: '40px' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div className="highlight-badge">Real-Time Video Sync Copilot</div>
+          <h1 className="hero-title">
+            Watch Videos.<br/>
+            Together.
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="hero-subtitle">
+            Create a room, invite your friends, and watch YouTube videos in perfect synchronization. No guessing, no latency.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+        
+        <div style={{ display: 'flex', gap: '40px', justifyContent: 'center', marginTop: '80px', flexWrap: 'wrap' }}>
+          <div className="card" style={{ flex: '1', minWidth: '320px', maxWidth: '420px' }}>
+            <h2 style={{ marginTop: 0, fontSize: '24px' }}>Host a Party</h2>
+            <p style={{ color: '#4b5563', fontSize: '15px', marginBottom: '24px' }}>Create a room and invite others. You will be assigned the Host role.</p>
+            <input 
+              type="text" 
+              placeholder="Your Username" 
+              value={username} 
+              onChange={(e) => setUsername(e.target.value)} 
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <button className="primary" style={{ width: '100%', marginTop: '12px', fontSize: '16px', padding: '14px' }} onClick={handleCreateRoom} disabled={loadingAction === 'create'}>
+              {loadingAction === 'create' ? 'Creating...' : 'Get Started →'}
+            </button>
+          </div>
+
+          <div className="card" style={{ flex: '1', minWidth: '320px', maxWidth: '420px', background: '#f8fafc' }}>
+            <h2 style={{ marginTop: 0, fontSize: '24px' }}>Join a Room</h2>
+            <p style={{ color: '#4b5563', fontSize: '15px', marginBottom: '24px' }}>Enter the room ID shared by your friends to join.</p>
+            <input 
+              type="text" 
+              placeholder="Your Username" 
+              value={username} 
+              onChange={(e) => setUsername(e.target.value)} 
+            />
+            <input 
+              type="text" 
+              placeholder="Room ID" 
+              value={roomId} 
+              onChange={(e) => setRoomId(e.target.value)} 
+            />
+            <button style={{ width: '100%', marginTop: '12px', fontSize: '16px', padding: '14px' }} onClick={handleJoinRoom} disabled={loadingAction === 'join'}>
+              {loadingAction === 'join' ? 'Joining...' : 'Enter Room →'}
+            </button>
+          </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </>
   );
 }

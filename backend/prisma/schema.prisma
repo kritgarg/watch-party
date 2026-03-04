@@ -1,0 +1,34 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Room {
+  id           String        @id @default(uuid())
+  videoId      String?
+  playState    String        @default("paused")
+  currentTime         Float         @default(0)
+  lastUpdateTimestamp Float         @default(0)
+  createdAt           DateTime      @default(now())
+
+  participants Participant[]
+}
+
+model Participant {
+  id        String   @id @default(uuid())
+  username  String
+  role      Role     @default(PARTICIPANT)
+  socketId  String?
+
+  roomId    String
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  HOST
+  MODERATOR
+  PARTICIPANT
+}
