@@ -12,8 +12,7 @@ const app = express();
 const httpServer = http.createServer(app);
 
 // Middleware
-const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-app.use(cors({ origin: frontendUrl }));
+app.use(cors({ origin: '*' }));
 app.use(express.json());
 
 // Routes

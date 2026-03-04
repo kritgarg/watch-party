@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+if (!API_URL) {
+  console.warn('NEXT_PUBLIC_API_URL is missing. API calls may fail.');
+}
 
 export const api = axios.create({
   baseURL: API_URL,

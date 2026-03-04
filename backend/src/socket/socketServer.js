@@ -10,10 +10,9 @@ import { handleVideoEvents } from './videoSocketHandlers.js';
 let io; // Hold instance
 
 export const initSocketServer = (httpServer) => {
-  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
   io = new Server(httpServer, {
     cors: {
-      origin: frontendUrl,
+      origin: '*',
       methods: ['GET', 'POST'],
     },
   });

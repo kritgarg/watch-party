@@ -45,7 +45,6 @@ npm install
 Create a `.env` file in the `backend` directory:
 ```
 DATABASE_URL="postgresql://user:password@localhost:5432/watchparty"
-FRONTEND_URL="http://localhost:3000"
 PORT=4000
 ```
 Run Database Migrations:
@@ -64,7 +63,7 @@ Open a new terminal and navigate to the frontend:
 cd frontend
 npm install
 ```
-Create a `.env.local` file (optional, defaults to `http://localhost:4000`):
+Create a `.env.local` file in the `frontend` directory:
 ```
 NEXT_PUBLIC_API_URL=http://localhost:4000
 ```
@@ -83,7 +82,6 @@ To deploy the **Backend** to Render:
 2. **Start Command**: `npm start` (Runs `node src/server.js`)
 3. **Environment Variables**:
    - `DATABASE_URL`: Your PostgreSQL connection string.
-   - `FRONTEND_URL`: The URL where your frontend is hosted.
    - `PORT`: (Render sets this automatically).
 
 **Troubleshooting Prisma Error on Render**: 
