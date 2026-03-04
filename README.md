@@ -45,6 +45,7 @@ npm install
 Create a `.env` file in the `backend` directory:
 ```
 DATABASE_URL="postgresql://user:password@localhost:5432/watchparty"
+FRONTEND_URL="http://localhost:3000"
 PORT=4000
 ```
 Run Database Migrations:
