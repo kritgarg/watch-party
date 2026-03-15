@@ -16,6 +16,14 @@ app.use(cors({ origin: '*' }));
 app.use(express.json());
 
 // Routes
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    message: 'API is running',
+    timestamp: new Date().toISOString()
+  });
+});
+
 app.use('/rooms', roomRoutes);
 
 // Error Handling block
